@@ -13,6 +13,11 @@ export default class GameScene extends Phaser.Scene {
         super('main');
     }
 
+    init() {
+        // run ui scene in parallel with the Game Scene
+        this.scene.launch('ui');
+    }
+
     create() {
         let goldPickupAudio = this.sound.add('goldSound', {
             loop: false,
