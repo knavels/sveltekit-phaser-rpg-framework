@@ -3,6 +3,8 @@ import Phaser from 'phaser';
 import LoadingSplash from './scenes/Splash';
 import PreloaderScene from './scenes/PreloaderScene';
 import GameScene from './scenes/GameScene';
+import TitleScene from './scenes/TitleScene';
+import UiScene from './scenes/UiScene';
 
 export const gameConfig = {
     width: 800,
@@ -15,16 +17,14 @@ export const config: Phaser.Types.Core.GameConfig = {
     height: gameConfig.height,
     title: 'My Game',
     physics: {
-        default: 'matter',
-        matter: {
-            autoUpdate: false,
-            debug: false,
-            setBounds: true,
+        default: 'arcade',
+        arcade: {
+            debug: true,
             gravity: {
+                y: 0,
                 x: 0,
-                y: 1
-            }
-        }
+            },
+        },
     },
     pixelArt: true,
     transparent: true,
@@ -32,5 +32,5 @@ export const config: Phaser.Types.Core.GameConfig = {
         mode: Phaser.Scale.NONE
     },
 
-    scene: [LoadingSplash, PreloaderScene, GameScene]
+    scene: [LoadingSplash, PreloaderScene, TitleScene, GameScene, UiScene]
 };
