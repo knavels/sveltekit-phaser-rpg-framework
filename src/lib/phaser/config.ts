@@ -5,8 +5,8 @@ import PreloaderScene from './scenes/PreloaderScene';
 import GameScene from './scenes/GameScene';
 
 export const gameConfig = {
-    width: 360,
-    height: 640,
+    width: 800,
+    height: 600,
 }
 
 export const config: Phaser.Types.Core.GameConfig = {
