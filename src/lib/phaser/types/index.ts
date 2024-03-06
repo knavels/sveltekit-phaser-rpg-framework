@@ -19,3 +19,10 @@ export type SpawnerConfig = {
     limit: number;
     spawnerType: SpawnerType;
 };
+
+export enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+}
