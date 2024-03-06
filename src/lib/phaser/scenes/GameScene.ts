@@ -110,7 +110,10 @@ export default class GameScene extends Phaser.Scene {
 
     addCollisions() {
         this.physics.add.collider(this.player, this.map.blockedLayer);
+        this.physics.add.collider(this.monsters, this.map.blockedLayer);
+
         this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
+        this.physics.add.overlap(this.player, this.monsters, this.enemyOverlap, undefined, this);
     }
 
     createGameManager() {
@@ -148,5 +151,10 @@ export default class GameScene extends Phaser.Scene {
         chest.makeInactive();
 
         this.events.emit('pickupChest', chest.id);
+    }
+
+    enemyOverlap(_player: any, enemy: any) {
+        enemy.makeInactive();
+        this.events.emit('destroyEnemy', enemy.id);
     }
 }
