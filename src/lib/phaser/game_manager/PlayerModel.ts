@@ -35,7 +35,7 @@ export default class PlayerModel {
         this.maxHealth = 10;
 
         const location = Phaser.Math.RND.pick(this.spawnLocations);
-        this.x = location.x;
-        this.y = location.y;
+        this.x = location.x * 2;
+        this.y = location.y * 2;
     }
 }
