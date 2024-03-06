@@ -22,6 +22,9 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
         // add the player to the existing scene
         this.scene.add.existing(this);
+
+        // have the camera follow the player
+        this.scene.cameras.main.startFollow(this);
     }
 
     getBody(): Phaser.Physics.Arcade.Body {

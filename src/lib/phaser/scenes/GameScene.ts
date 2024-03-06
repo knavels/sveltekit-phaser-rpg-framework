@@ -104,6 +104,10 @@ export default class GameScene extends Phaser.Scene {
         // create the blocked layer
         this.blockedLayer = this.map.createLayer('blocked', this.tiles, 0, 0)!;
         this.blockedLayer.setScale(2);
+
+        // update world bounds
+        this.physics.world.bounds.width = this.map.widthInPixels * 2;
+        this.physics.world.bounds.height = this.map.heightInPixels * 2;
     }
 
     addCollisions() {
