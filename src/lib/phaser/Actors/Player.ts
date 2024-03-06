@@ -6,7 +6,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
         // store a reference to the scene
         this.scene = scene;
-        this.velocity = 160;
+        this.velocity = 160; // the velocity player is moving
 
         // enable physics
         this.scene.physics.world.enable(this);

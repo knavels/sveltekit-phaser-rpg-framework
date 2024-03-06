@@ -7,7 +7,7 @@ export default class Chest extends Phaser.Physics.Arcade.Image {
 
         // store a reference to the scene
         this.scene = scene;
-        this.coins = 10;
+        this.coins = 10; // the amount of coins this chest contains
 
         // enable phsyics
         this.scene.physics.world.enable(this);
