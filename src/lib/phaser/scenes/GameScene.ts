@@ -108,6 +108,9 @@ export default class GameScene extends Phaser.Scene {
         // update world bounds
         this.physics.world.bounds.width = this.map.widthInPixels * 2;
         this.physics.world.bounds.height = this.map.heightInPixels * 2;
+
+        // limit the camera to the size of the map
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2);
     }
 
     addCollisions() {
