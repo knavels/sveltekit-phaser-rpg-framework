@@ -1,5 +1,6 @@
 import { score } from "$stores";
 import Chest from "../Classes/Chest";
+import Map from "../Classes/Map";
 import Player from "../Classes/Player";
 
 //create chest positions array
@@ -16,10 +17,7 @@ export default class GameScene extends Phaser.Scene {
     private player!: Player;
     private chests!: Phaser.Physics.Arcade.Group;
 
-    private map!: Phaser.Tilemaps.Tilemap;
-    private tiles!: Phaser.Tilemaps.Tileset;
-    private backgroundLayer!: Phaser.Tilemaps.TilemapLayer;
-    private blockedLayer!: Phaser.Tilemaps.TilemapLayer;
+    private map!: Map;
 
     private wall!: Phaser.Physics.Arcade.Image;
 
@@ -91,31 +89,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createMap() {
-        // create the tile map
-        this.map = this.make.tilemap({ key: 'map' });
-
-        // add the tileset image to the map
-        this.tiles = this.map.addTilesetImage('background', 'background', 32, 32, 1, 2)!;
-
-        // create the background layer
-        this.backgroundLayer = this.map.createLayer('background', this.tiles, 0, 0)!;
-        this.backgroundLayer.setScale(2);
-
-        // create the blocked layer
-        this.blockedLayer = this.map.createLayer('blocked', this.tiles, 0, 0)!;
-        this.blockedLayer.setScale(2);
-        this.blockedLayer.setCollisionByExclusion([-1]); // all tiles in this layer will have collision enabled
-
-        // update world bounds
-        this.physics.world.bounds.width = this.map.widthInPixels * 2;
-        this.physics.world.bounds.height = this.map.heightInPixels * 2;
-
-        // limit the camera to the size of the map
-        this.cameras.main.setBounds(0, 0, this.map.widthInPixels * 2, this.map.heightInPixels * 2);
+        this.map = new Map(this, 'map', 'background', 'background', 'blocked');
     }
 
     addCollisions() {
-        this.physics.add.collider(this.player, this.blockedLayer);
+        this.physics.add.collider(this.player, this.map.blockedLayer);
         this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
     }
 
