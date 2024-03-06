@@ -2,9 +2,13 @@ import { score } from "$stores";
 import Chest from "../Actors/Chest";
 import Player from "../Actors/Player";
 
+//create chest positions array
+const chestPositions = [[100, 100], [200, 200], [300, 300], [400, 400], [500, 500]];
+
+
 export default class GameScene extends Phaser.Scene {
     private player!: Player;
-    private chest!: Chest;
+    private chests!: Phaser.Physics.Arcade.Group;
 
     private wall!: Phaser.Physics.Arcade.Image;
 
@@ -47,7 +51,22 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createChest() {
-        this.chest = new Chest(this, 300, 300, 'items', 0);
+        // create chest group
+        this.chests = this.physics.add.group();
+
+        // scpecity the max number of chest we can have
+        const maxNumberOfChests = 3;
+
+        // spawn chest
+        for (let i = 0; i < maxNumberOfChests; ++i) {
+            this.spawnChest();
+        }
+    }
+
+    spawnChest() {
+        const position = Phaser.Math.RND.pick(chestPositions);
+        const chest = new Chest(this, position[0], position[1], 'items', 0);
+        this.chests.add(chest);
     }
 
     createWalls() {
@@ -57,7 +76,7 @@ export default class GameScene extends Phaser.Scene {
 
     addCollisions() {
         this.physics.add.collider(this.player, this.wall);
-        this.physics.add.overlap(this.player, this.chest, this.collectChest, undefined, this);
+        this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
     }
 
     update() {
@@ -73,5 +92,8 @@ export default class GameScene extends Phaser.Scene {
 
         // destroy the chest game object
         chest.destroy();
+
+        // spawn a new chest after certain amount of time has passed
+        this.time.delayedCall(1000, this.spawnChest, [], this);
     }
 }
