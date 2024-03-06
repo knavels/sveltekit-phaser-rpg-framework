@@ -65,6 +65,7 @@ export default class Spawner {
             location.x,
             location.y,
             Phaser.Math.RND.integerInRange(0, 19),
+            Phaser.Math.RND.integerInRange(10, 20),
             Phaser.Math.RND.integerInRange(3, 5),
             1,
             this.id

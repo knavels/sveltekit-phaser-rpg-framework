@@ -60,10 +60,37 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
         this.add(this.weapon);
         this.weapon.alpha = 0;
 
+        // create player health bar
+        this.createHealthBar();
     }
 
     getBody(): Phaser.Physics.Arcade.Body {
         return this.body as Phaser.Physics.Arcade.Body;
+    }
+
+    respawn(model: PlayerModel) {
+        this.health = model.health;
+        this.setPosition(model.x, model.y);
+        this.updateHealthBar();
+    }
+
+    createHealthBar() {
+        this.healthBar = this.scene.add.graphics();
+        this.updateHealthBar();
+    }
+
+    updateHealthBar() {
+        this.healthBar.clear();
+        this.healthBar.fillStyle(0xffffff, 1);
+        this.healthBar.fillRect(this.x - 32, this.y - 40, 64, 5);
+
+        this.healthBar.fillGradientStyle(0xff0000, 0xffffff, 4, 4);
+        this.healthBar.fillRect(this.x - 32, this.y - 40, 64 * this.health / this.maxHealth, 5);
+    }
+
+    updateHealth(health: number) {
+        this.health = health;
+        this.updateHealthBar();
     }
 
     update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
@@ -122,5 +149,7 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
                 this.weapon.flipX = true;
             }
         }
+
+        this.updateHealthBar();
     }
 }

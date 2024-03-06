@@ -1,4 +1,3 @@
-import { score } from "$stores";
 import Chest from "../classes/Chest";
 import Map from "../classes/Map";
 import Monster from "../classes/Monster";
@@ -161,6 +160,14 @@ export default class GameScene extends Phaser.Scene {
             })
         });
 
+        this.events.on('updatePlayerHealth', (health: number) => {
+            this.player.updateHealth(health);
+        });
+
+        this.events.on('respawnPlayer', (player: PlayerModel) => {
+            this.player.respawn(player);
+        });
+
         this.gameManager = new GameManager(this, this.map.map.objects);
         this.gameManager.setup();
     }
@@ -180,7 +187,7 @@ export default class GameScene extends Phaser.Scene {
     enemyOverlap(_weapon: any, enemy: any) {
         if (this.player.isAttacking && !this.player.swordHit) {
             this.player.swordHit = true;
-            this.events.emit('monsterAttacked', enemy.id);
+            this.events.emit('monsterAttacked', enemy.id, this.player.id);
         }
     }
 }
