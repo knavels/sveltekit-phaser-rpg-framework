@@ -24,19 +24,23 @@ export default class Player extends Phaser.Physics.Arcade.Image {
         this.scene.add.existing(this);
     }
 
+    getBody(): Phaser.Physics.Arcade.Body {
+        return this.body as Phaser.Physics.Arcade.Body;
+    }
+
     update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-        (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
+        this.getBody().setVelocity(0);
 
         if (cursors.left.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(-this.velocity);
+            this.getBody().setVelocityX(-this.velocity);
         } else if (cursors.right.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(this.velocity);
+            this.getBody().setVelocityX(this.velocity);
         }
 
         if (cursors.up.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-this.velocity);
+            this.getBody().setVelocityY(-this.velocity);
         } else if (cursors.down.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(this.velocity);
+            this.getBody().setVelocityY(this.velocity);
         }
     }
 }
