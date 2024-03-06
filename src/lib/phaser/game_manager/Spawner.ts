@@ -1,5 +1,6 @@
 import { SpawnerType, type Location, type SpawnerAddObjectCallback, type SpawnerConfig, type SpawnerDeleteObjectCallback } from "../types";
 import ChestModel from "./ChestModel";
+import MonsterModel from "./MonsterModel";
 
 export default class Spawner {
     public id: string;
@@ -43,6 +44,8 @@ export default class Spawner {
     spawnObject() {
         if (this.spawnerType === SpawnerType.CHEST) {
             this.spawnChest();
+        } else if (this.spawnerType === SpawnerType.MONSTER) {
+            this.spawnMonster();
         }
     }
 
@@ -54,6 +57,23 @@ export default class Spawner {
         this.objectsCreated.push(chest);
 
         this.addObject(chest.id, chest);
+    }
+
+    spawnMonster() {
+        const location = this.pickRandomLocation();
+        const monster = new MonsterModel(
+            location.x,
+            location.y,
+            Phaser.Math.RND.integerInRange(10, 20),
+            Phaser.Math.RND.integerInRange(0, 19),
+            Phaser.Math.RND.integerInRange(3, 5),
+            1,
+            this.id
+        );
+
+        this.objectsCreated.push(monster);
+
+        this.addObject(monster.id, monster);
     }
 
     pickRandomLocation(): Location {

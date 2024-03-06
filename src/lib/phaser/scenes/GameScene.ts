@@ -1,24 +1,17 @@
 import { score } from "$stores";
 import Chest from "../classes/Chest";
 import Map from "../classes/Map";
+import Monster from "../classes/Monster";
 import Player from "../classes/Player";
 import ChestModel from "../game_manager/ChestModel";
 import GameManager from "../game_manager/GameManager";
+import type MonsterModel from "../game_manager/MonsterModel";
 import type { Location } from "../types";
-
-//create chest positions array
-const chestPositions = [
-    { x: 100, y: 100 },
-    { x: 200, y: 200 },
-    { x: 300, y: 300 },
-    { x: 400, y: 400 },
-    { x: 500, y: 500 },
-]
-
 
 export default class GameScene extends Phaser.Scene {
     private player!: Player;
     private chests!: Phaser.Physics.Arcade.Group;
+    private monsters!: Phaser.Physics.Arcade.Group;
 
     private map!: Map;
 
@@ -65,30 +58,50 @@ export default class GameScene extends Phaser.Scene {
     createGroups() {
         // create a chest group
         this.chests = this.physics.add.group();
+
+        // create a monster group
+        this.monsters = this.physics.add.group();
     }
 
-    spawnChest(chestData: ChestModel) {
+    spawnChest(model: ChestModel) {
         let chest = this.chests.getFirstDead() as Chest;
 
         if (!chest) {
             chest = new Chest(this,
-                chestData.x * 2,
-                chestData.y * 2,
+                model.x * 2,
+                model.y * 2,
                 'items',
                 0,
-                chestData.gold,
-                chestData.id
+                model
             );
 
             // add chest to chests group
             this.chests.add(chest);
         } else {
-            chest.coins = chestData.gold;
-            chest.id = chestData.id;
-            chest.setPosition(chestData.x * 2, chestData.y * 2);
+            chest.updateByModel(model);
             chest.makeActive();
         }
+    }
 
+    spawnMonster(model: MonsterModel) {
+        let monster = this.monsters.getFirstDead() as Monster;
+
+        if (!monster) {
+            monster = new Monster(
+                this,
+                model.x * 2,
+                model.y * 2,
+                'monsters',
+                model
+            );
+
+            // add monster to monsters group
+            this.monsters.add(monster);
+            // monster.setCollideWorldBounds(true);
+        } else {
+            monster.updateByModel(model);
+            monster.makeActive();
+        }
     }
 
     createMap() {
@@ -108,6 +121,10 @@ export default class GameScene extends Phaser.Scene {
 
         this.events.on('chestSpawned', (chest: ChestModel) => {
             this.spawnChest(chest);
+        });
+
+        this.events.on('monsterSpawned', (monster: MonsterModel) => {
+            this.spawnMonster(monster);
         });
 
         this.gameManager = new GameManager(this, this.map.map.objects);

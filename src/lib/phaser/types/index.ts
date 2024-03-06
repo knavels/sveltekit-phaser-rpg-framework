@@ -1,4 +1,5 @@
 import type ChestModel from "../game_manager/ChestModel";
+import type MonsterModel from "../game_manager/MonsterModel";
 
 export type Location = {
     x: number;
@@ -6,7 +7,7 @@ export type Location = {
 };
 
 // SPAWNER
-export type SpawnerAddObjectCallback = (id: string, chest: ChestModel) => void;
+export type SpawnerAddObjectCallback = (id: string, data: ChestModel | MonsterModel) => void;
 export type SpawnerDeleteObjectCallback = (id: string) => void;
 export enum SpawnerType {
     CHEST,

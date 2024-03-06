@@ -1,5 +1,6 @@
 import { SpawnerType, type Location, type SpawnerConfig } from "../types";
 import type ChestModel from "./ChestModel";
+import type MonsterModel from "./MonsterModel";
 import Spawner from "./Spawner";
 
 export default class GameManager {
@@ -7,6 +8,7 @@ export default class GameManager {
     private mapData: Phaser.Tilemaps.ObjectLayer[];
 
     private chests: any;
+    private monsters: any;
 
     private spawners: any;
 
@@ -21,7 +23,8 @@ export default class GameManager {
         this.mapData = mapData;
 
         this.spawners = {};
-        // this.chests = {};
+        this.chests = {};
+        this.monsters = {};
 
         this.playerLocations = [];
         this.chestLocations = {};
@@ -70,6 +73,8 @@ export default class GameManager {
     }
 
     setupSpawners() {
+        let spawner: Spawner;
+
         // create chest spawners
         Object.keys(this.chestLocations).forEach(key => {
             const config: SpawnerConfig = {
@@ -79,10 +84,28 @@ export default class GameManager {
                 id: `chest-${key}`
             };
 
-            const spawner = new Spawner(config,
+            spawner = new Spawner(config,
                 this.chestLocations[key],
                 this.addChest.bind(this),
                 this.deleteChest.bind(this)
+            );
+
+            this.spawners[spawner.id] = spawner;
+        });
+
+        // create monster spawners
+        Object.keys(this.monsterLocations).forEach(key => {
+            const config: SpawnerConfig = {
+                spawnInterval: 3000,
+                limit: 3,
+                spawnerType: SpawnerType.MONSTER,
+                id: `monster-${key}`
+            };
+
+            spawner = new Spawner(config,
+                this.monsterLocations[key],
+                this.addMonster.bind(this),
+                this.deleteMonster.bind(this)
             );
 
             this.spawners[spawner.id] = spawner;
@@ -102,5 +125,14 @@ export default class GameManager {
 
     deleteChest(chestId: string) {
         delete this.chests[chestId];
+    }
+
+    addMonster(monsterId: string, monster: MonsterModel) {
+        this.monsters[monsterId] = monster;
+        this.scene.events.emit('monsterSpawned', monster);
+    }
+
+    deleteMonster(monsterId: string) {
+        delete this.monsters[monsterId];
     }
 }
