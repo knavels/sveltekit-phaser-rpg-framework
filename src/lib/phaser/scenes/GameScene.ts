@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createPlayer() {
-        this.player = new Player(this, 32, 32, 'characters', 0);
+        this.player = new Player(this, 224, 224, 'characters', 0);
     }
 
     createChest() {
