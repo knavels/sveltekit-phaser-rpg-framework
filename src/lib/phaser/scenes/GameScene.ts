@@ -104,6 +104,7 @@ export default class GameScene extends Phaser.Scene {
         // create the blocked layer
         this.blockedLayer = this.map.createLayer('blocked', this.tiles, 0, 0)!;
         this.blockedLayer.setScale(2);
+        this.blockedLayer.setCollisionByExclusion([-1]); // all tiles in this layer will have collision enabled
 
         // update world bounds
         this.physics.world.bounds.width = this.map.widthInPixels * 2;
@@ -114,7 +115,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     addCollisions() {
-        this.physics.add.collider(this.player, this.wall);
+        this.physics.add.collider(this.player, this.blockedLayer);
         this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
     }
 
