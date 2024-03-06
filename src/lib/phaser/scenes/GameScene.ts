@@ -2,14 +2,14 @@ import { score } from "$stores";
 import Chest from "../classes/Chest";
 import Map from "../classes/Map";
 import Monster from "../classes/Monster";
-import Player from "../classes/Player";
+import { PlayerContainer } from "../classes/Player";
 import ChestModel from "../game_manager/ChestModel";
 import GameManager from "../game_manager/GameManager";
 import type MonsterModel from "../game_manager/MonsterModel";
 import type { Location } from "../types";
 
 export default class GameScene extends Phaser.Scene {
-    private player!: Player;
+    private player!: PlayerContainer;
     private chests!: Phaser.Physics.Arcade.Group;
     private monsters!: Phaser.Physics.Arcade.Group;
 
@@ -52,7 +52,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createPlayer(location: Location) {
-        this.player = new Player(this, location.x * 2, location.y * 2, 'characters', 0);
+        this.player = new PlayerContainer(this, location.x * 2, location.y * 2, 'characters', 0);
     }
 
     createGroups() {

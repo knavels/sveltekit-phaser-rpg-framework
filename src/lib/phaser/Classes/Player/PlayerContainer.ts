@@ -1,30 +1,35 @@
-export default class Player extends Phaser.Physics.Arcade.Image {
+import Player from ".";
+
+export default class PlayerContainer extends Phaser.GameObjects.Container {
     public velocity!: number;
 
+    private player!: Player;
+
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number) {
-        super(scene, x, y, texture, frame);
+        super(scene, x, y);
 
         // store a reference to the scene
         this.scene = scene;
-        this.velocity = 160; // the velocity player is moving
+        this.velocity = 160; // the velocity player container is moving
+
+        // set a size on the container
+        this.setSize(64, 64);
 
         // enable physics
         this.scene.physics.world.enable(this);
 
-        // set immovable if another object collides with the player
-        this.setImmovable(false);
-
-        // scale the player
-        this.setScale(2);
-
         // collide with world bounds
-        this.setCollideWorldBounds(true);
+        this.getBody().setCollideWorldBounds(true);
 
-        // add the player to the existing scene
+        // add the player container to the existing scene
         this.scene.add.existing(this);
 
-        // have the camera follow the player
+        // have the camera follow the player container
         this.scene.cameras.main.startFollow(this);
+
+        // create the player
+        this.player = new Player(this.scene, 0, 0, texture, frame);
+        this.add(this.player);
     }
 
     getBody(): Phaser.Physics.Arcade.Body {
