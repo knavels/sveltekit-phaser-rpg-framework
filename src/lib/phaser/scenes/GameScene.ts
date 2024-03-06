@@ -6,7 +6,7 @@ import { PlayerContainer } from "../classes/Player";
 import ChestModel from "../game_manager/ChestModel";
 import GameManager from "../game_manager/GameManager";
 import type MonsterModel from "../game_manager/MonsterModel";
-import type { Location } from "../types";
+import type PlayerModel from "../game_manager/PlayerModel";
 
 export default class GameScene extends Phaser.Scene {
     private player!: PlayerContainer;
@@ -51,8 +51,15 @@ export default class GameScene extends Phaser.Scene {
         this.cursors = this.input.keyboard!.createCursorKeys();
     }
 
-    createPlayer(location: Location) {
-        this.player = new PlayerContainer(this, location.x * 2, location.y * 2, 'characters', 0);
+    createPlayer(player: PlayerModel) {
+        this.player = new PlayerContainer(
+            this,
+            player.x * 2,
+            player.y * 2,
+            'characters',
+            0,
+            player
+        );
     }
 
     createGroups() {
@@ -112,13 +119,13 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.map.blockedLayer);
         this.physics.add.collider(this.monsters, this.map.blockedLayer);
 
-        this.physics.add.overlap(this.player.hero, this.chests, this.collectChest, undefined, this);
+        this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
         this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, undefined, this);
     }
 
     createGameManager() {
-        this.events.on('spawnPlayer', (location: Location) => {
-            this.createPlayer(location);
+        this.events.on('spawnPlayer', (player: PlayerModel) => {
+            this.createPlayer(player);
             this.addCollisions();
         });
 
@@ -128,6 +135,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.events.on('monsterSpawned', (monster: MonsterModel) => {
             this.spawnMonster(monster);
+        });
+
+        this.events.on('chestRemoved', (chestId: string) => {
+            this.chests.getChildren().forEach(chest => {
+                if ((chest as Chest).id === chestId) {
+                    (chest as Chest).makeInactive();
+                }
+            })
         });
 
         this.events.on('monsterRemoved', (monsterId: string) => {
@@ -148,7 +163,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.gameManager = new GameManager(this, this.map.map.objects);
         this.gameManager.setup();
-
     }
 
     update() {
@@ -156,17 +170,11 @@ export default class GameScene extends Phaser.Scene {
             this.player.update(this.cursors);
     }
 
-    collectChest(_player: any, chest: any) {
+    collectChest(player: any, chest: any) {
         // player gold pickup sound
         this.goldPickupAudio.play();
 
-        // update the score
-        score.update(chest.coins);
-
-        // inactive the chest game object
-        chest.makeInactive();
-
-        this.events.emit('pickupChest', chest.id);
+        this.events.emit('pickupChest', chest.id, player.id);
     }
 
     enemyOverlap(_weapon: any, enemy: any) {

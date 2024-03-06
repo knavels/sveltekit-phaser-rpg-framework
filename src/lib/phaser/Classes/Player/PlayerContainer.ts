@@ -1,3 +1,4 @@
+import type PlayerModel from "$lib/phaser/game_manager/PlayerModel";
 import { Direction } from "$lib/phaser/types";
 import Player from ".";
 
@@ -8,9 +9,15 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
     public currentDirection: Direction;
     public swordHit: boolean;
 
+    public id!: string;
+    private health!: number;
+    private maxHealth!: number;
+
+    private healthBar!: Phaser.GameObjects.Graphics;
+
     private velocity!: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number, model: PlayerModel) {
         super(scene, x, y);
 
         // store a reference to the scene
@@ -20,6 +27,10 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
         this.currentDirection = Direction.RIGHT;
         this.isAttacking = false;
         this.swordHit = false;
+
+        this.health = model.health;
+        this.maxHealth = model.maxHealth;
+        this.id = model.id;
 
         // set a size on the container
         this.setSize(64, 64);

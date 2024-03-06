@@ -1,6 +1,8 @@
+import { score } from "$stores";
 import { SpawnerType, type Location, type SpawnerConfig } from "../types";
 import type ChestModel from "./ChestModel";
 import type MonsterModel from "./MonsterModel";
+import PlayerModel from "./PlayerModel";
 import Spawner from "./Spawner";
 
 export default class GameManager {
@@ -11,6 +13,8 @@ export default class GameManager {
     private monsters: any;
 
     private spawners: any;
+
+    private players: any;
 
     private playerLocations: Location[];
     private chestLocations: any;
@@ -25,6 +29,7 @@ export default class GameManager {
         this.spawners = {};
         this.chests = {};
         this.monsters = {};
+        this.players = {};
 
         this.playerLocations = [];
         this.chestLocations = {};
@@ -65,9 +70,18 @@ export default class GameManager {
     }
 
     setupEventListeners() {
-        this.scene.events.on('pickupChest', (chestId: string) => {
+        this.scene.events.on('pickupChest', (chestId: string, playerId: string) => {
             if (this.chests[chestId]) {
+                const gold = this.chests[chestId].data.gold
+
+                // update the score
+                score.update(gold);
+
+                this.players[playerId].updateGold(gold);
+
                 this.spawners[this.chests[chestId].spawnerId].removeObject(chestId);
+
+                this.scene.events.emit('chestRemoved', chestId);
             }
         });
 
@@ -128,9 +142,11 @@ export default class GameManager {
     }
 
     spawnPlayer() {
-        const location = Phaser.Math.RND.pick(this.playerLocations);
+        const player = new PlayerModel(this.playerLocations);
 
-        this.scene.events.emit('spawnPlayer', location);
+        this.players[player.id] = player;
+
+        this.scene.events.emit('spawnPlayer', player);
     }
 
     addChest(chestId: string, chest: ChestModel) {
