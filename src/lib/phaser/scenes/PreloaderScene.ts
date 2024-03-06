@@ -15,6 +15,9 @@ export default class PreloaderScene extends Phaser.Scene {
 
                 // load sounds
                 this.loadSounds();
+
+                // load tilemap
+                this.loadTileMap();
             }
         ];
 
@@ -24,6 +27,9 @@ export default class PreloaderScene extends Phaser.Scene {
     private loadImages() {
         this.load.image('button1', 'assets/images/ui/blue_button01.png');
         this.load.image('button2', 'assets/images/ui/blue_button02.png');
+
+        // load the map tileset image
+        this.load.image('background', 'assets/level/background-extruded.png');
     }
 
     private loadSpriteSheets() {
@@ -33,6 +39,11 @@ export default class PreloaderScene extends Phaser.Scene {
 
     private loadSounds() {
         this.load.audio('goldSound', ['assets/audio/Pickup.wav']);
+    }
+
+    private loadTileMap() {
+        // map made with Tiled in JSON format
+        this.load.tilemapTiledJSON('map', 'assets/level/large_level.json');
     }
 
     private loadAndSendUpdates(preloadList: (() => void)[]) {

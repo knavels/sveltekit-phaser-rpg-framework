@@ -16,6 +16,11 @@ export default class GameScene extends Phaser.Scene {
     private player!: Player;
     private chests!: Phaser.Physics.Arcade.Group;
 
+    private map!: Phaser.Tilemaps.Tilemap;
+    private tiles!: Phaser.Tilemaps.Tileset;
+    private backgroundLayer!: Phaser.Tilemaps.TilemapLayer;
+    private blockedLayer!: Phaser.Tilemaps.TilemapLayer;
+
     private wall!: Phaser.Physics.Arcade.Image;
 
     private goldPickupAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
@@ -34,9 +39,10 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.createAudio();
         this.createInput();
+        this.createMap();
         this.createPlayer();
         this.createChest();
-        this.createWalls();
+
         this.addCollisions();
     }
 
@@ -84,9 +90,20 @@ export default class GameScene extends Phaser.Scene {
         this.chests.add(chest);
     }
 
-    createWalls() {
-        this.wall = this.physics.add.image(500, 100, 'button1');
-        this.wall.setImmovable();
+    createMap() {
+        // create the tile map
+        this.map = this.make.tilemap({ key: 'map' });
+
+        // add the tileset image to the map
+        this.tiles = this.map.addTilesetImage('background', 'background', 32, 32, 1, 2)!;
+
+        // create the background layer
+        this.backgroundLayer = this.map.createLayer('background', this.tiles, 0, 0)!;
+        this.backgroundLayer.setScale(2);
+
+        // create the blocked layer
+        this.blockedLayer = this.map.createLayer('blocked', this.tiles, 0, 0)!;
+        this.blockedLayer.setScale(2);
     }
 
     addCollisions() {
