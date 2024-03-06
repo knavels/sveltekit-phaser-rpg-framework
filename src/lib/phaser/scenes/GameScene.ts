@@ -88,6 +88,7 @@ export default class GameScene extends Phaser.Scene {
 
         // create a monster group
         this.monsters = this.physics.add.group();
+        this.monsters.runChildUpdate = true;
     }
 
     spawnChest(model: ChestModel) {
@@ -116,8 +117,8 @@ export default class GameScene extends Phaser.Scene {
         if (!monster) {
             monster = new Monster(
                 this,
-                model.x * 2,
-                model.y * 2,
+                model.x,
+                model.y,
                 'monsters',
                 model
             );
@@ -192,6 +193,16 @@ export default class GameScene extends Phaser.Scene {
         this.events.on('respawnPlayer', (player: PlayerModel) => {
             this.player.respawn(player);
             this.playerDeathAudio.play();
+        });
+
+        this.events.on('monsterMovement', (monsters: any) => {
+            this.monsters.getChildren().forEach(monster => {
+                Object.keys(monsters).forEach(monsterId => {
+                    if ((monster as Monster).id === monsterId) {
+                        this.physics.moveToObject(monster, monsters[monsterId], 40);
+                    }
+                })
+            })
         });
 
         this.gameManager = new GameManager(this, this.map.map.objects);

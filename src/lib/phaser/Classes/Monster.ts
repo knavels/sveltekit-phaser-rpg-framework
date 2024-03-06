@@ -61,7 +61,7 @@ export default class Monster extends Phaser.Physics.Arcade.Image {
         this.maxHealth = model.data.maxHealth;
         this.id = model.id;
         this.setTexture(this.texture.key, model.data.frame);
-        this.setPosition(model.x * 2, model.y * 2);
+        this.setPosition(model.x, model.y);
     }
 
     makeActive() {
@@ -76,5 +76,9 @@ export default class Monster extends Phaser.Physics.Arcade.Image {
         this.setVisible(false);
         this.body!.checkCollision.none = true;
         this.healthBar.clear();
+    }
+
+    update() {
+        this.updateHealthBar();
     }
 }

@@ -9,6 +9,7 @@ export type Location = {
 // SPAWNER
 export type SpawnerAddObjectCallback = (id: string, data: ChestModel | MonsterModel) => void;
 export type SpawnerDeleteObjectCallback = (id: string) => void;
+export type GeneralCallback = () => void | undefined;
 export enum SpawnerType {
     CHEST,
     MONSTER,

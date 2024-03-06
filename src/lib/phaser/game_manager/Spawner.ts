@@ -1,10 +1,11 @@
-import { SpawnerType, type Location, type SpawnerAddObjectCallback, type SpawnerConfig, type SpawnerDeleteObjectCallback } from "../types";
+import { SpawnerType, type Location, type SpawnerAddObjectCallback, type SpawnerConfig, type SpawnerDeleteObjectCallback, type GeneralCallback } from "../types";
 import ChestModel from "./ChestModel";
 import MonsterModel from "./MonsterModel";
 
 export default class Spawner {
     public id: string;
     public spawnInterval: number;
+    public moveMonsterInterval!: number;
     public limit: number;
     public spawnerType: SpawnerType;
 
@@ -12,12 +13,13 @@ export default class Spawner {
 
     public addObject: SpawnerAddObjectCallback;
     public deleteObject: SpawnerDeleteObjectCallback;
+    public moveCallback?: GeneralCallback;
 
     public objectsCreated: ChestModel[];
 
     private interval!: number;
 
-    constructor(config: SpawnerConfig, spawnLocations: Location[], addObject: SpawnerAddObjectCallback, deleteObject: SpawnerDeleteObjectCallback) {
+    constructor(config: SpawnerConfig, spawnLocations: Location[], addObject: SpawnerAddObjectCallback, deleteObject: SpawnerDeleteObjectCallback, moveCallback?: GeneralCallback) {
         this.id = config.id;
         this.spawnInterval = config.spawnInterval;
         this.limit = config.limit;
@@ -29,6 +31,7 @@ export default class Spawner {
 
         this.addObject = addObject;
         this.deleteObject = deleteObject;
+        this.moveCallback = moveCallback;
 
         this.start();
     }
@@ -39,6 +42,10 @@ export default class Spawner {
                 this.spawnObject();
             }
         }, this.spawnInterval)
+
+        if (this.spawnerType === SpawnerType.MONSTER) {
+            this.moveMonsters();
+        }
     }
 
     spawnObject() {
@@ -94,5 +101,15 @@ export default class Spawner {
     removeObject(id: string) {
         this.objectsCreated = this.objectsCreated.filter(obj => obj.id !== id);
         this.deleteObject(id);
+    }
+
+    moveMonsters() {
+        this.moveMonsterInterval = setInterval(() => {
+            this.objectsCreated.forEach(monster => {
+                monster.move();
+            });
+
+            this.moveCallback!();
+        }, 1000)
     }
 }
