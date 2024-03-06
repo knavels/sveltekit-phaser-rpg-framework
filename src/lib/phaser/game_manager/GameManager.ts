@@ -71,9 +71,16 @@ export default class GameManager {
             }
         });
 
-        this.scene.events.on('destroyEnemy', (monsterId: string) => {
+        this.scene.events.on('monsterAttacked', (monsterId: string) => {
             if (this.monsters[monsterId]) {
-                this.spawners[this.monsters[monsterId].spawnerId].removeObject(monsterId);
+                // subtract health from monster model
+                this.monsters[monsterId].loseHealth();
+
+                // check the monster health and if dead remove it
+                if (this.monsters[monsterId].data.health <= 0) {
+                    this.spawners[this.monsters[monsterId].spawnerId].removeObject(monsterId);
+                    this.scene.events.emit('monsterRemoved', monsterId);
+                }
             }
         });
     }

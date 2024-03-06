@@ -20,4 +20,8 @@ export default class MonsterModel {
         this.data.maxHealth = health;
         this.data.attack = attack;
     }
+
+    loseHealth() {
+        this.data.health -= 1;
+    }
 }

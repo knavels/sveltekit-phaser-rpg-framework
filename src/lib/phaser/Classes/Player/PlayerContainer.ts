@@ -2,13 +2,13 @@ import { Direction } from "$lib/phaser/types";
 import Player from ".";
 
 export default class PlayerContainer extends Phaser.GameObjects.Container {
-    private player!: Player;
-    private weapon!: Phaser.GameObjects.Image;
+    public hero!: Player;
+    public weapon!: Phaser.GameObjects.Image;
+    public isAttacking: boolean;
+    public currentDirection: Direction;
+    public swordHit: boolean;
+
     private velocity!: number;
-    private currentDirection: Direction;
-    private isAttacking: boolean;
-    private flipX: boolean;
-    private swordHit: boolean;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number) {
         super(scene, x, y);
@@ -19,7 +19,6 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
 
         this.currentDirection = Direction.RIGHT;
         this.isAttacking = false;
-        this.flipX = true;
         this.swordHit = false;
 
         // set a size on the container
@@ -38,8 +37,9 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
         this.scene.cameras.main.startFollow(this);
 
         // create the player
-        this.player = new Player(this.scene, 0, 0, texture, frame);
-        this.add(this.player);
+        this.hero = new Player(this.scene, 0, 0, texture, frame);
+        this.add(this.hero);
+        this.hero.flipX = true;
 
         // create the weapon game object
         this.weapon = this.scene.add.image(40, 0, 'items', 4);
@@ -62,10 +62,12 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
             this.getBody().setVelocityX(-this.velocity);
             this.currentDirection = Direction.LEFT;
             this.weapon.setPosition(-40, 0);
+            this.hero.flipX = false;
         } else if (cursors.right.isDown) {
             this.getBody().setVelocityX(this.velocity);
             this.currentDirection = Direction.RIGHT;
             this.weapon.setPosition(40, 0);
+            this.hero.flipX = true;
         }
 
         if (cursors.up.isDown) {

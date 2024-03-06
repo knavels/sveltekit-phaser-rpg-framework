@@ -112,8 +112,8 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.map.blockedLayer);
         this.physics.add.collider(this.monsters, this.map.blockedLayer);
 
-        this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
-        this.physics.add.overlap(this.player, this.monsters, this.enemyOverlap, undefined, this);
+        this.physics.add.overlap(this.player.hero, this.chests, this.collectChest, undefined, this);
+        this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, undefined, this);
     }
 
     createGameManager() {
@@ -128,6 +128,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.events.on('monsterSpawned', (monster: MonsterModel) => {
             this.spawnMonster(monster);
+        });
+
+        this.events.on('monsterRemoved', (monsterId: string) => {
+            this.monsters.getChildren().forEach(monster => {
+                if ((monster as Monster).id === monsterId) {
+                    (monster as Monster).makeInactive();
+                }
+            })
         });
 
         this.gameManager = new GameManager(this, this.map.map.objects);
@@ -153,8 +161,10 @@ export default class GameScene extends Phaser.Scene {
         this.events.emit('pickupChest', chest.id);
     }
 
-    enemyOverlap(_player: any, enemy: any) {
-        enemy.makeInactive();
-        this.events.emit('destroyEnemy', enemy.id);
+    enemyOverlap(_weapon: any, enemy: any) {
+        if (this.player.isAttacking && !this.player.swordHit) {
+            this.player.swordHit = true;
+            this.events.emit('monsterAttacked', enemy.id);
+        }
     }
 }

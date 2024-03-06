@@ -17,4 +17,6 @@ export default class ChestModel {
         this.data = {};
         this.data.gold = gold;
     }
+
+    loseHealth() { }
 }
