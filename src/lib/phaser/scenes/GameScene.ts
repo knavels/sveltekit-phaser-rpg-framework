@@ -17,6 +17,10 @@ export default class GameScene extends Phaser.Scene {
     private gameManager!: GameManager;
 
     private goldPickupAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    private enemyDeathAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    private playerAttackAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    private playerDamageAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    private playerDeathAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -41,7 +45,23 @@ export default class GameScene extends Phaser.Scene {
     createAudio() {
         this.goldPickupAudio = this.sound.add('goldSound', {
             loop: false,
+            volume: 0.3
+        });
+        this.enemyDeathAudio = this.sound.add('enemyDeath', {
+            loop: false,
             volume: 0.2
+        });
+        this.playerAttackAudio = this.sound.add('playerAttack', {
+            loop: false,
+            volume: 0.2
+        });
+        this.playerDamageAudio = this.sound.add('playerDamage', {
+            loop: false,
+            volume: 0.2
+        });
+        this.playerDeathAudio = this.sound.add('playerDeath', {
+            loop: false,
+            volume: 0.4
         });
     }
 
@@ -57,7 +77,8 @@ export default class GameScene extends Phaser.Scene {
             player.y * 2,
             'characters',
             0,
-            player
+            player,
+            this.playerAttackAudio
         );
     }
 
@@ -148,6 +169,7 @@ export default class GameScene extends Phaser.Scene {
             this.monsters.getChildren().forEach(monster => {
                 if ((monster as Monster).id === monsterId) {
                     (monster as Monster).makeInactive();
+                    this.enemyDeathAudio.play();
                 }
             })
         });
@@ -162,10 +184,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.events.on('updatePlayerHealth', (health: number) => {
             this.player.updateHealth(health);
+            if (health < this.player.health) {
+                this.playerDamageAudio.play();
+            }
         });
 
         this.events.on('respawnPlayer', (player: PlayerModel) => {
             this.player.respawn(player);
+            this.playerDeathAudio.play();
         });
 
         this.gameManager = new GameManager(this, this.map.map.objects);

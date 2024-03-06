@@ -24,6 +24,8 @@ export default class PlayerModel {
 
     updateHealth(health: number) {
         this.health += health;
+
+        if (this.health > 10) this.health = 10;
     }
 
     updateGold(gold: number) {

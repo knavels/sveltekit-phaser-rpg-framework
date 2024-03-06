@@ -10,14 +10,16 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
     public swordHit: boolean;
 
     public id!: string;
-    private health!: number;
+    public health!: number;
     private maxHealth!: number;
 
     private healthBar!: Phaser.GameObjects.Graphics;
 
     private velocity!: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number, model: PlayerModel) {
+    private attackAudio: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame: string | number, model: PlayerModel, attackAudio: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound) {
         super(scene, x, y);
 
         // store a reference to the scene
@@ -31,6 +33,8 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
         this.health = model.health;
         this.maxHealth = model.maxHealth;
         this.id = model.id;
+
+        this.attackAudio = attackAudio;
 
         // set a size on the container
         this.setSize(64, 64);
@@ -121,6 +125,8 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
         if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.isAttacking) {
             this.weapon.alpha = 1;
             this.isAttacking = true;
+
+            this.attackAudio.play();
 
             this.scene.time.delayedCall(150, () => {
                 this.weapon.alpha = 0;
