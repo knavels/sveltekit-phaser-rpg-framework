@@ -1,5 +1,5 @@
 import { score } from "$stores";
-import UiButton from "../Actors/UiButton";
+import UiButton from "../Classes/UiButton";
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {

@@ -1,6 +1,6 @@
 import { score } from "$stores";
-import Chest from "../Actors/Chest";
-import Player from "../Actors/Player";
+import Chest from "../Classes/Chest";
+import Player from "../Classes/Player";
 
 //create chest positions array
 const chestPositions = [
