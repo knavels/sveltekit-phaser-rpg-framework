@@ -138,6 +138,14 @@ export default class GameScene extends Phaser.Scene {
             })
         });
 
+        this.events.on('updateMonsterHealth', (monsterId: string, health: number) => {
+            this.monsters.getChildren().forEach(monster => {
+                if ((monster as Monster).id === monsterId) {
+                    (monster as Monster).updateHealth(health);
+                }
+            })
+        });
+
         this.gameManager = new GameManager(this, this.map.map.objects);
         this.gameManager.setup();
 
