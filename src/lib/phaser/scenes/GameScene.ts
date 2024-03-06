@@ -3,7 +3,13 @@ import Chest from "../Actors/Chest";
 import Player from "../Actors/Player";
 
 //create chest positions array
-const chestPositions = [[100, 100], [200, 200], [300, 300], [400, 400], [500, 500]];
+const chestPositions = [
+    { x: 100, y: 100 },
+    { x: 200, y: 200 },
+    { x: 300, y: 300 },
+    { x: 400, y: 400 },
+    { x: 500, y: 500 },
+]
 
 
 export default class GameScene extends Phaser.Scene {
@@ -65,7 +71,16 @@ export default class GameScene extends Phaser.Scene {
 
     spawnChest() {
         const position = Phaser.Math.RND.pick(chestPositions);
-        const chest = new Chest(this, position[0], position[1], 'items', 0);
+
+        let chest = this.chests.getFirstDead() as Chest;
+
+        if (!chest) {
+            chest = new Chest(this, position.x, position.y, 'items', 0);
+        } else {
+            chest.setPosition(position.x, position.y);
+            chest.makeActive();
+        }
+
         this.chests.add(chest);
     }
 
@@ -90,8 +105,8 @@ export default class GameScene extends Phaser.Scene {
         // update the score
         score.update(chest.coins);
 
-        // destroy the chest game object
-        chest.destroy();
+        // inactive the chest game object
+        chest.makeInactive();
 
         // spawn a new chest after certain amount of time has passed
         this.time.delayedCall(1000, this.spawnChest, [], this);
