@@ -1,10 +1,10 @@
 export default class Map {
-    public scene: Phaser.Scene;
-
     public map!: Phaser.Tilemaps.Tilemap;
     public tiles!: Phaser.Tilemaps.Tileset;
     public backgroundLayer!: Phaser.Tilemaps.TilemapLayer;
     public blockedLayer!: Phaser.Tilemaps.TilemapLayer;
+
+    private scene: Phaser.Scene;
 
     private key: string;
     private tilesetName: string;

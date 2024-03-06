@@ -2,6 +2,8 @@ import { score } from "$stores";
 import Chest from "../classes/Chest";
 import Map from "../classes/Map";
 import Player from "../classes/Player";
+import GameManager from "../game_manager/GameManager";
+import type { Location } from "../types";
 
 //create chest positions array
 const chestPositions = [
@@ -19,7 +21,7 @@ export default class GameScene extends Phaser.Scene {
 
     private map!: Map;
 
-    private wall!: Phaser.Physics.Arcade.Image;
+    private gameManager!: GameManager;
 
     private goldPickupAudio!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
 
@@ -38,10 +40,9 @@ export default class GameScene extends Phaser.Scene {
         this.createAudio();
         this.createInput();
         this.createMap();
-        this.createPlayer();
         this.createChest();
 
-        this.addCollisions();
+        this.createGameManager();
     }
 
     createAudio() {
@@ -56,8 +57,8 @@ export default class GameScene extends Phaser.Scene {
         this.cursors = this.input.keyboard!.createCursorKeys();
     }
 
-    createPlayer() {
-        this.player = new Player(this, 224, 224, 'characters', 0);
+    createPlayer(location: Location) {
+        this.player = new Player(this, location.x * 2, location.y * 2, 'characters', 0);
     }
 
     createChest() {
@@ -97,8 +98,20 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.chests, this.collectChest, undefined, this);
     }
 
+    createGameManager() {
+        this.events.on('spawnPlayer', (location: Location) => {
+            this.createPlayer(location);
+            this.addCollisions();
+        });
+
+        this.gameManager = new GameManager(this, this.map.map.objects);
+        this.gameManager.setup();
+
+    }
+
     update() {
-        this.player.update(this.cursors);
+        if (this.player)
+            this.player.update(this.cursors);
     }
 
     collectChest(_player: any, chest: any) {
